@@ -16,6 +16,13 @@ Brokerage holdings and daily performance logs are ingested into separate Notion 
 5.  **Generates a daily AI summary** — sends the current holdings to Claude (Haiku), which writes a short, factual 3–4 sentence summary of the day's performance. That summary is logged as a new row in a separate Notion database (Date / Total Value / Summary), so history stays sortable and filterable instead of one long scrolling page.
 6.  **Runs on a schedule** via GitHub Actions, every weekday shortly after market close — no local machine required.
 
+## Update frequency
+ 
+Both the holdings sync and the AI summary run **once per weekday**, shortly after US market close (~4:30 PM ET / 8:30 PM UTC). This is a deliberate scoping decision, not a limitation of the architecture — the two scripts are independent and callable on any schedule, so adding a second run (e.g., at market open) would just mean adding a second cron entry to the GitHub Actions workflow.
+ 
+Practically, this means the **Portfolio** table shows values and daily % change as of the most recent close, not a live intraday feed. If you view the page mid-day, you're seeing yesterday's closing snapshot until that day's run completes.
+
+
 ## Architecture
  
 ```

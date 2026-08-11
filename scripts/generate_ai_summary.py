@@ -7,7 +7,7 @@ that summary as a new dated entry on the Portfolio Log page.
 """
 
 import os
-from datetime import date
+from datetime import datetime
 
 import anthropic
 from dotenv import load_dotenv
@@ -88,15 +88,16 @@ plain text into a Notion page."""
 
 def create_log_row(summary: str, total_value: float):
     """Add a new row to the Portfolio Log database for today's summary."""
-    today_iso = date.today().isoformat()  # Notion's Date property expects ISO format
-    today_readable = date.today().strftime("%B %d, %Y")
+    now = datetime.now()
+    today_iso = now.date().isoformat()  # Notion's Date property expects ISO format
+    timestamp_readable = now.strftime("%B %d, %Y – %I:%M %p")
 
     notion.pages.create(
         parent={"database_id": NOTION_LOG_DATABASE_ID},
         properties={
             # "Name" is the default title property Notion creates for every
             # new database — every database needs exactly one title property.
-            "Name": {"title": [{"type": "text", "text": {"content": today_readable}}]},
+            "Name": {"title": [{"type": "text", "text": {"content": timestamp_readable}}]},
             "Date": {"date": {"start": today_iso}},
             "Summary": {
                 "rich_text": [{"type": "text", "text": {"content": summary}}]
