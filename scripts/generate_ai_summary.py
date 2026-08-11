@@ -17,7 +17,7 @@ load_dotenv()
 
 NOTION_API_KEY = os.environ["NOTION_API_KEY"]
 DATABASE_ID = os.environ["NOTION_DATABASE_ID"]
-LOG_PAGE_ID = os.environ["NOTION_LOG_PAGE_ID"]
+NOTION_LOG_DATABASE_ID = os.environ["NOTION_LOG_DATABASE_ID"]
 ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
 
 notion = Client(auth=NOTION_API_KEY)
@@ -52,8 +52,9 @@ def read_holdings() -> list[dict]:
     return holdings
 
 
-def generate_summary(holdings: list[dict]) -> str:
-    """Ask Claude for a short plain-English summary of today's holdings."""
+def generate_summary(holdings: list[dict]) -> tuple[str, float]:
+    """Ask Claude for a short plain-English summary of today's holdings.
+    Returns (summary_text, total_portfolio_value)."""
     holdings_text = "\n".join(
         f"- {h['ticker']} ({h['sector']}): ${h['value']:.2f}, {h['change_pct']:+.2f}% today"
         for h in holdings
@@ -82,27 +83,26 @@ plain text into a Notion page."""
         messages=[{"role": "user", "content": prompt}],
     )
 
-    return response.content[0].text
+    return response.content[0].text, total_value
 
 
-def create_log_subpage(summary: str):
-    """Create a new dated subpage under the Portfolio Log page for this run."""
-    today = date.today().strftime("%B %d, %Y")
+def create_log_row(summary: str, total_value: float):
+    """Add a new row to the Portfolio Log database for today's summary."""
+    today_iso = date.today().isoformat()  # Notion's Date property expects ISO format
+    today_readable = date.today().strftime("%B %d, %Y")
 
     notion.pages.create(
-        parent={"page_id": LOG_PAGE_ID},
+        parent={"database_id": NOTION_LOG_DATABASE_ID},
         properties={
-            "title": [{"type": "text", "text": {"content": today}}],
-        },
-        children=[
-            {
-                "object": "block",
-                "type": "paragraph",
-                "paragraph": {
-                    "rich_text": [{"type": "text", "text": {"content": summary}}]
-                },
+            # "Name" is the default title property Notion creates for every
+            # new database — every database needs exactly one title property.
+            "Name": {"title": [{"type": "text", "text": {"content": today_readable}}]},
+            "Date": {"date": {"start": today_iso}},
+            "Summary": {
+                "rich_text": [{"type": "text", "text": {"content": summary}}]
             },
-        ],
+            "Total Value": {"number": round(total_value, 2)},
+        },
     )
 
 
@@ -112,9 +112,9 @@ if __name__ == "__main__":
     print(f"Found {len(holdings)} holding(s).\n")
 
     print("Generating summary with Claude...")
-    summary = generate_summary(holdings)
+    summary, total_value = generate_summary(holdings)
     print(f"\nSummary:\n{summary}\n")
 
-    print("Creating log entry in Notion...")
-    create_log_subpage(summary)
+    print("Adding row to Portfolio Log database...")
+    create_log_row(summary, total_value)
     print("Done.")
