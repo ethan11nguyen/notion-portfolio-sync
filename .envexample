@@ -1,5 +1,9 @@
 NOTION_API_KEY=secret_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 NOTION_DATABASE_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
 SCHWAB_CLIENT_ID=your_client_id_here
 SCHWAB_CLIENT_SECRET=your_client_secret_here
 SCHWAB_REDIRECT_URI=https://127.0.0.1
+
+ANTHROPIC_API_KEY=your_key_here
+NOTION_LOG_PAGE_ID=your_page_id_here
