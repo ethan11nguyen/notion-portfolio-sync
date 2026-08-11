@@ -59,7 +59,15 @@ if __name__ == "__main__":
     # Fake data for now — Stage 2 replaces this with real Schwab API pulls.
     fake_holdings = [
         {"ticker": "AAPL", "value": 1500.00, "change_pct": 1.2, "sector": "Tech"},
+        {"ticker": "NVDA", "value": 2200.00, "change_pct": 4.8, "sector": "Tech"},
+        {"ticker": "MSFT", "value": 1800.00, "change_pct": 0.6, "sector": "Tech"},
         {"ticker": "JPM", "value": 800.00, "change_pct": -0.5, "sector": "Finance"},
+        {"ticker": "GS", "value": 650.00, "change_pct": -1.8, "sector": "Finance"},
+        {"ticker": "V", "value": 900.00, "change_pct": 0.3, "sector": "Finance"},
+        {"ticker": "XOM", "value": 700.00, "change_pct": -3.1, "sector": "Energy"},
+        {"ticker": "CVX", "value": 620.00, "change_pct": -2.4, "sector": "Energy"},
+        {"ticker": "JNJ", "value": 500.00, "change_pct": 0.1, "sector": "Healthcare"},
+        {"ticker": "UNH", "value": 950.00, "change_pct": -5.2, "sector": "Healthcare"},
     ]
 
     for h in fake_holdings:
