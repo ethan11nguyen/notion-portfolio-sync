@@ -8,6 +8,7 @@ that summary as a new dated entry on the Portfolio Log page.
 
 import os
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import anthropic
 from dotenv import load_dotenv
@@ -88,9 +89,14 @@ plain text into a Notion page."""
 
 def create_log_row(summary: str, total_value: float):
     """Add a new row to the Portfolio Log database for today's summary."""
-    now = datetime.now()
-    today_iso = now.date().isoformat()  # Notion's Date property expects ISO format
-    timestamp_readable = now.strftime("%B %d, %Y – %I:%M %p")
+    # Use explicit US Eastern time rather than datetime.now(), since
+    # datetime.now() returns whatever timezone the system clock is set to —
+    # Pacific locally, but UTC on GitHub Actions runners. This keeps
+    # timestamps consistent (and market-relevant) regardless of where
+    # the script actually runs.
+    now_eastern = datetime.now(ZoneInfo("America/New_York"))
+    today_iso = now_eastern.date().isoformat()  # Notion's Date property expects ISO format
+    timestamp_readable = now_eastern.strftime("%B %d, %Y – %I:%M %p ET")
 
     notion.pages.create(
         parent={"database_id": NOTION_LOG_DATABASE_ID},
