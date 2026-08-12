@@ -1,11 +1,11 @@
 # Notion Portfolio Sync
 
-Notion public link:
-https://dot-muse-921.notion.site/Portfolio-Tracker-3b9ef07e774080b5b745c5be31141321?source=copy_link
-
 A personal use pipeline that pulls my Charles Schwab brokerage holdings and syncs them into a Notion database. Inside my personal Notion, there is filtered views to see sector and performance. Claude is also used to generate a daily portfolio summary, running automatically in the cloud via GitHub Actions.
 
 Brokerage holdings and daily performance logs are ingested into separate Notion databases, combining both components onto a unified dashboard using linked database views
+
+Notion public link:
+https://dot-muse-921.notion.site/Portfolio-Tracker-3b9ef07e774080b5b745c5be31141321?source=copy_link
 
 ## What it does
 
